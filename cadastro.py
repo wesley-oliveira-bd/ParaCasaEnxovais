@@ -31,12 +31,28 @@ def cadastrar_produto():
     entry_preco_custo.delete(0, "end")
     entry_preco_venda.delete(0, "end")
 
+def atualizar_lista_produtos():
+    lista_produtos.delete(0, "end")
+    conexao = sqlite3.connect('produtos.db')
+    cursor = conexao.cursor()
+    cursor.execute("SELECT * FROM produtos")
+    dados = cursor.fetchall()
+    conexao.close()
+
+    for dado in dados:
+        texto_dado = ' - '.join(map(str,dado))
+        lista_produtos.insert(tk.END, texto_dado)
+
+def btn_cadastrar():
+    cadastrar_produto()
+    atualizar_lista_produtos()
+
 #Design da janela
 lista_und = ["UN", "JG"]
 
 janela = tk.Tk()
 janela.title('Cadastro de Produtos')
-janela.geometry("410x170")
+janela.geometry("410x400")
 
 label_titulo = tk.Label(text='Cadastro de produtos')
 label_titulo.grid(row=0, column=0, sticky='nswe', columnspan=4)
@@ -71,7 +87,11 @@ label_preco_venda.grid(row=3, column=2, padx=5, pady=5, sticky='nswe')
 entry_preco_venda = tk.Entry()
 entry_preco_venda.grid(row=3, column=3, padx=5, pady=5, sticky='nswe')
 
-btn_cadastrar_produto = tk.Button(text='Cadastrar', command=cadastrar_produto)
+lista_produtos = tk.Listbox()
+lista_produtos.grid(row=5, column=0, padx=5, pady=5, sticky='nswe', columnspan=4)
+
+btn_cadastrar_produto = tk.Button(text='Cadastrar', command=btn_cadastrar)
 btn_cadastrar_produto.grid(row=4, column=0, padx=10, pady=10, sticky='nswe', columnspan=4)
 
+atualizar_lista_produtos()
 janela.mainloop()
